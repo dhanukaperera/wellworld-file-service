@@ -24,6 +24,12 @@ const s3 = new AWS.S3({
 	secretAccessKey: process.env.AWS_SECRET,
 });
 
+app.get("/status", (req, res) => {
+	res.status(200).send({
+		message: "Live",
+	});
+});
+
 app.post("/upload", upload, (req, res) => {
 	let myFile = req.file.originalname.split(".");
 	const fileType = myFile[myFile.length - 1];
