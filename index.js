@@ -4,9 +4,12 @@ const express = require("express");
 const multer = require("multer");
 const AWS = require("aws-sdk");
 const { v4: uuidv4 } = require("uuid");
+var cors = require("cors");
 
 const app = express();
 const port = 5000;
+
+app.use(cors());
 
 const storage = multer.memoryStorage({
 	destination: function (req, file, callback) {
@@ -14,7 +17,7 @@ const storage = multer.memoryStorage({
 	},
 });
 
-const upload = multer({ storage }).single("image");
+const upload = multer({ storage }).single("file");
 
 const s3 = new AWS.S3({
 	accessKeyId: process.env.AWS_ID,
