@@ -8,11 +8,37 @@ var cors = require("cors");
 
 const app = express();
 const port = 5000;
+var request = require("request");
 
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
+const merge = require("easy-pdf-merge");
 
 app.use(cors());
+
+const mergePdf = () => {
+	request.get(
+		"https://wellworld-attachments.s3.amazonaws.com/15ac609b-2b6e-4a4d-849f-b7d9978f6bff.pdf",
+		function (error, response, body) {
+			if (!error && response.statusCode == 200) {
+				var csv = body;
+				merge([csv, csv], "new2.pdf", function (err) {
+					if (err) {
+						return console.log(err);
+					}
+					console.log("Success");
+				});
+			}
+		}
+	);
+
+	/* merge(["output.pdf", "output.pdf"], "new.pdf", function (err) {
+		if (err) {
+			return console.log(err);
+		}
+		console.log("Success");
+	}); */
+};
 
 const createPdf = () => {
 	const doc = new PDFDocument();
@@ -36,7 +62,8 @@ const s3 = new AWS.S3({
 
 app.get("/status", (req, res) => {
 	//createPdf();
-	uploadFile("output.pdf");
+	//uploadFile("output.pdf");
+	mergePdf();
 	res.status(200).send({
 		message: "Live",
 	});
