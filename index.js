@@ -52,7 +52,7 @@ app.post("/upload", upload, (req, res) => {
 		Key: `${uuidv4()}.${fileType}`,
 		Body: req.file.buffer,
 		ACL: "public-read",
-		ContentType: setContentType(fileType),
+		/* ContentType: setContentType(fileType), */
 	};
 
 	s3.upload(params, (error, data) => {
