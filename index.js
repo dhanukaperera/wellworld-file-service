@@ -30,6 +30,19 @@ app.get("/status", (req, res) => {
 	});
 });
 
+const setContentType = (type) => {
+	let contentType = undefined;
+	const imageTypes = ["png", "jpg", "jpeg", "gif"];
+	if (imageTypes.includes(type)) {
+		contentType = "image/png";
+	} else if (type === "pdf") {
+		contentType = "application/pdf";
+	} else {
+		contentType = "application/octet-stream";
+	}
+	return contentType;
+};
+
 app.post("/upload", upload, (req, res) => {
 	let myFile = req.file.originalname.split(".");
 	const fileType = myFile[myFile.length - 1];
@@ -39,6 +52,7 @@ app.post("/upload", upload, (req, res) => {
 		Key: `${uuidv4()}.${fileType}`,
 		Body: req.file.buffer,
 		ACL: "public-read",
+		ContentType: setContentType(fileType),
 	};
 
 	s3.upload(params, (error, data) => {
