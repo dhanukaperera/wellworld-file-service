@@ -37,7 +37,9 @@ var upload = multer({
 		contentType: multerS3.AUTO_CONTENT_TYPE,
 		acl: "public-read",
 		key: function (req, file, cb) {
-			cb(null, Date.now().toString() + ".jpg");
+			let myFile = file.originalname.split(".");
+			const fileType = myFile[myFile.length - 1];
+			cb(null, Date.now().toString() + "." + fileType);
 		},
 	}),
 });
