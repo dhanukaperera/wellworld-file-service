@@ -49,7 +49,7 @@ app.post("/upload", upload, (req, res) => {
 	const fileType = myFile[myFile.length - 1];
 
 	const contentType = setContentType(fileType);
-	console.log("type", type);
+	console.log("fileType", fileType);
 	console.log("contentType", contentType);
 	const params = {
 		Bucket: process.env.AWS_BUCKET_NAME,
