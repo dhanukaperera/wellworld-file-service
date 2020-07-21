@@ -45,14 +45,10 @@ const setContentType = (type) => {
 };
 
 app.post("/upload", upload, (req, res) => {
-	console.log("req", req.file);
-
 	let myFile = req.file.originalname.split(".");
 	const fileType = myFile[myFile.length - 1];
-
 	const contentType = setContentType(fileType);
-	/* 	console.log("fileType", fileType);
-	console.log("contentType", contentType); */
+
 	const params = {
 		Bucket: process.env.AWS_BUCKET_NAME,
 		Key: `${uuidv4()}.${fileType}`,
@@ -65,7 +61,6 @@ app.post("/upload", upload, (req, res) => {
 		if (error) {
 			res.status(500).send(error);
 		}
-
 		res.status(200).send(data);
 	});
 });
