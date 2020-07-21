@@ -45,6 +45,8 @@ const setContentType = (type) => {
 };
 
 app.post("/upload", upload, (req, res) => {
+	console.log("req", req.file);
+
 	let myFile = req.file.originalname.split(".");
 	const fileType = myFile[myFile.length - 1];
 
