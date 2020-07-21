@@ -50,7 +50,7 @@ app.post("/upload", upload, (req, res) => {
 	let myFile = req.file.originalname.split(".");
 	const fileType = myFile[myFile.length - 1];
 
-	/* 	const contentType = setContentType(fileType); */
+	const contentType = setContentType(fileType);
 	/* 	console.log("fileType", fileType);
 	console.log("contentType", contentType); */
 	const params = {
@@ -58,7 +58,7 @@ app.post("/upload", upload, (req, res) => {
 		Key: `${uuidv4()}.${fileType}`,
 		Body: req.file.buffer,
 		ACL: "public-read",
-		/* 	ContentType: contentType, */
+		ContentType: contentType,
 	};
 
 	s3.upload(params, (error, data) => {
