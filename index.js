@@ -48,15 +48,15 @@ app.post("/upload", upload, (req, res) => {
 	let myFile = req.file.originalname.split(".");
 	const fileType = myFile[myFile.length - 1];
 
-	const contentType = setContentType(fileType);
-	console.log("fileType", fileType);
-	console.log("contentType", contentType);
+	/* 	const contentType = setContentType(fileType); */
+	/* 	console.log("fileType", fileType);
+	console.log("contentType", contentType); */
 	const params = {
 		Bucket: process.env.AWS_BUCKET_NAME,
 		Key: `${uuidv4()}.${fileType}`,
 		Body: req.file.buffer,
 		ACL: "public-read",
-		ContentType: contentType,
+		/* 	ContentType: contentType, */
 	};
 
 	s3.upload(params, (error, data) => {
