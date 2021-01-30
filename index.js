@@ -88,6 +88,8 @@ app.post("/upload", upload, (req, res) => {
 		ContentType: "application/pdf",
 	};
 
+	fs.unlinkSync(enterPath);
+
 	/* 	const readFile = fs.readFileSync("example.pdf");
 
 	const params = {
