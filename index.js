@@ -78,7 +78,50 @@ app.post("/upload", upload, (req, res) => {
 		// Here in done you have pdf file which you can save or transfer in another stream
 		fs.writeFileSync(outputPath, done);
 	});
-	const readFile = fs.readFileSync("example.pdf");
+
+	const checkTime = 1000;
+	function check() {
+		setTimeout(() => {
+			fs.readFile(outputPath, function (err, data) {
+				if (err) {
+					// got error reading the file, call check() again
+					console.log(
+						"got error reading the file, call check() again"
+					);
+					check();
+				} else {
+					console.log(
+						"we have the file contents here, so do something with it can delete the source file too"
+					);
+					// we have the file contents here, so do something with it
+					// can delete the source file too
+
+					const readFile = fs.readFileSync("example.pdf");
+
+					const params = {
+						Bucket: process.env.AWS_BUCKET_NAME,
+						Key: `${uuidv4()}.pdf`,
+						Body: readFile,
+						ACL: "public-read",
+						ContentType: "application/pdf",
+					};
+
+					s3.upload(params, (error, data) => {
+						if (error) {
+							res.status(500).send(error);
+						}
+						res.status(200).send(data);
+					});
+
+					fs.unlinkSync(outputPath);
+				}
+			});
+		}, checkTime);
+	}
+
+	check();
+
+	/* 	const readFile = fs.readFileSync("example.pdf");
 
 	const params = {
 		Bucket: process.env.AWS_BUCKET_NAME,
@@ -87,7 +130,7 @@ app.post("/upload", upload, (req, res) => {
 		ACL: "public-read",
 		ContentType: "application/pdf",
 	};
-
+ */
 	fs.unlinkSync(enterPath);
 
 	/* 	const readFile = fs.readFileSync("example.pdf");
@@ -100,12 +143,12 @@ app.post("/upload", upload, (req, res) => {
 		ContentType: contentType,
 	}; */
 
-	s3.upload(params, (error, data) => {
+	/* 	s3.upload(params, (error, data) => {
 		if (error) {
 			res.status(500).send(error);
 		}
 		res.status(200).send(data);
-	});
+	}); */
 });
 
 app.listen(port, () => {
