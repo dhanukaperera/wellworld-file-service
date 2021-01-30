@@ -6,6 +6,10 @@ const AWS = require("aws-sdk");
 const { v4: uuidv4 } = require("uuid");
 var cors = require("cors");
 
+const libre = require("libreoffice-convert");
+const path = require("path");
+const fs = require("fs");
+
 const app = express();
 const port = 5000;
 
@@ -49,13 +53,50 @@ app.post("/upload", upload, (req, res) => {
 	const fileType = myFile[myFile.length - 1];
 	const contentType = setContentType(fileType);
 
-	const params = {
+	/* 	const params = {
 		Bucket: process.env.AWS_BUCKET_NAME,
 		Key: `${uuidv4()}.${fileType}`,
 		Body: req.file.buffer,
 		ACL: "public-read",
 		ContentType: contentType,
 	};
+ */
+	fs.writeFileSync("example.docx", req.file.buffer);
+
+	const extend = ".pdf";
+	const enterPath = path.join(__dirname, "/example.docx");
+	const outputPath = path.join(__dirname, `/example${extend}`);
+
+	// Read file
+	const file = fs.readFileSync(enterPath);
+	// Convert it to pdf format with undefined filter (see Libreoffice doc about filter)
+	libre.convert(file, extend, undefined, (err, done) => {
+		if (err) {
+			console.log(`Error converting file: ${err}`);
+		}
+
+		// Here in done you have pdf file which you can save or transfer in another stream
+		fs.writeFileSync(outputPath, done);
+	});
+	const readFile = fs.readFileSync("example.pdf");
+
+	const params = {
+		Bucket: process.env.AWS_BUCKET_NAME,
+		Key: `${uuidv4()}.pdf`,
+		Body: readFile,
+		ACL: "public-read",
+		ContentType: "application/pdf",
+	};
+
+	/* 	const readFile = fs.readFileSync("example.pdf");
+
+	const params = {
+		Bucket: process.env.AWS_BUCKET_NAME,
+		Key: `${uuidv4()}.pdf`,
+		Body: readFile.buffer,
+		ACL: "public-read",
+		ContentType: contentType,
+	}; */
 
 	s3.upload(params, (error, data) => {
 		if (error) {
