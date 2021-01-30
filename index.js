@@ -61,10 +61,10 @@ app.post("/upload", upload, (req, res) => {
 		ContentType: contentType,
 	};
  */
-	fs.writeFileSync("example.docx", req.file.buffer);
+	fs.writeFileSync("example." + fileType, req.file.buffer);
 
 	const extend = ".pdf";
-	const enterPath = path.join(__dirname, "/example.docx");
+	const enterPath = path.join(__dirname, "/example." + fileType);
 	const outputPath = path.join(__dirname, `/example${extend}`);
 
 	// Read file
